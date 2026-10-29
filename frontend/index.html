@@ -1,0 +1,52 @@
+<!-- frontend/index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizarra Mágica</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <!-- Fuente moderna y redondeada de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="contenedor-principal">
+        <!-- Sección Izquierda: Área de dibujo -->
+        <div class="seccion-pizarra">
+            <div class="controles neobrutalismo-panel">
+                <h2>Pizarra Mágica ✨</h2>
+                <button id="btnLimpiar" class="boton-secundario">Limpiar Pizarra</button>
+            </div>
+            <!-- Lienzo de dibujo -->
+            <canvas id="lienzoDibujo" width="800" height="600" class="neobrutalismo-panel"></canvas>
+        </div>
+
+        <!-- Sección Derecha: Panel de Chat -->
+        <div class="seccion-chat neobrutalismo-panel">
+            <div class="cabecera-chat">
+                <h3>Chat en Vivo 💬</h3>
+                <!-- Botón para minimizar / expandir la paleta -->
+                <button id="btnTogglePaleta" class="boton-minimizar" title="Mostrar/Ocultar colores">🎨 Colores</button>
+            </div>
+            
+            <!-- Contenedor de la paleta (inicialmente oculto o colapsado para ganar espacio) -->
+            <div id="contenedorPaletaDesplegable" class="contenedor-paleta colapsado">
+                <div id="barraPaleta" class="barra-paleta">
+                    <!-- Los círculos se inyectarán aquí por JS -->
+                </div>
+            </div>
+
+            <div id="contenedorMensajes" class="mensajes neobrutalismo-interior">
+                <!-- Los mensajes irán aquí -->
+            </div>
+            <div class="area-entrada">
+                <input type="text" id="entradaMensaje" class="neobrutalismo-interior" placeholder="Escribe tu idea..." autocomplete="off">
+                <button id="btnEnviar" class="boton-primario">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

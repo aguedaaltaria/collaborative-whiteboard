@@ -1,0 +1,210 @@
+/* frontend/css/style.css */
+
+:root {
+    /* Paleta Neobrutalista */
+    --color-primario: #10b981; /* Verde esmeralda */
+    --color-secundario: #b91048; /* Magenta */
+    --color-fondo-pagina: #fef3c7; /* Amarillo pastel */
+    --color-fondo-panel: #ffffff; /* Blanco puro para áreas de trabajo */
+    
+    --color-texto: #111111; /* Casi negro para máximo contraste */
+    --grosor-borde: 3px;
+    --borde-fuerte: var(--grosor-borde) solid var(--color-texto);
+    --sombra-solida: 5px 5px 0px var(--color-texto);
+    --radio-esquinas: 16px;
+    --radio-botones: 50px; /* Forma de píldora */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--color-fondo-pagina);
+    color: var(--color-texto);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.contenedor-principal {
+    display: flex;
+    gap: 25px;
+    padding: 20px;
+}
+
+/* Clases reutilizables para el estilo Neobrutalista */
+.neobrutalismo-panel {
+    background-color: var(--color-fondo-panel);
+    border: var(--borde-fuerte);
+    border-radius: var(--radio-esquinas);
+    box-shadow: var(--sombra-solida);
+}
+
+.neobrutalismo-interior {
+    background-color: var(--color-fondo-pagina);
+    border: var(--borde-fuerte);
+    border-radius: 8px;
+}
+
+/* Zona de dibujo */
+.seccion-pizarra {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.controles {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+}
+
+.controles h2 {
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: var(--color-texto);
+}
+
+canvas {
+    cursor: crosshair;
+}
+
+/* Zona de chat */
+.seccion-chat {
+    width: 340px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.cabecera-chat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.cabecera-chat h3 {
+    margin-bottom: 0;
+    font-weight: 900;
+}
+
+.mensajes {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px;
+    margin-bottom: 15px;
+    height: 380px;
+}
+
+.area-entrada {
+    display: flex;
+    gap: 12px;
+}
+
+input[type="text"] {
+    flex-grow: 1;
+    padding: 12px 15px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    outline: none;
+    transition: background-color 0.2s;
+}
+
+input[type="text"]:focus {
+    background-color: var(--color-fondo-panel);
+}
+
+/* Botones Neobrutalistas */
+button {
+    padding: 12px 24px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    color: var(--color-texto);
+    border: var(--borde-fuerte);
+    border-radius: var(--radio-botones);
+    cursor: pointer;
+    box-shadow: 3px 3px 0px var(--color-texto);
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+button:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px var(--color-texto);
+}
+
+.boton-primario {
+    background-color: var(--color-primario);
+}
+
+.boton-secundario {
+    background-color: var(--color-secundario);
+    color: var(--color-fondo-panel);
+}
+
+.boton-minimizar {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    border-radius: 20px;
+    background-color: var(--color-fondo-pagina);
+    box-shadow: 2px 2px 0px var(--color-texto);
+}
+
+.boton-minimizar:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px var(--color-texto);
+}
+
+/* Panel de colores minimizable y paleta */
+.contenedor-paleta {
+    overflow: hidden;
+    max-height: 220px;
+    transition: max-height 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: var(--color-fondo-pagina);
+    border: var(--borde-fuerte);
+    border-radius: 8px;
+    opacity: 1;
+}
+
+.contenedor-paleta.colapsado {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 10px;
+    margin-bottom: 0;
+    border: none;
+}
+
+.barra-paleta {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    justify-items: center;
+    padding: 4px;
+}
+
+.circulo-color {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid var(--color-texto);
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.circulo-color:hover {
+    transform: scale(1.15);
+}
+
+.circulo-color.seleccionado {
+    transform: scale(1.25);
+    box-shadow: 0px 0px 0px 2px var(--color-fondo-panel), 0px 0px 0px 4px var(--color-texto);
+}
