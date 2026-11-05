@@ -5,15 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizarra Mágica</title>
-    <!-- Carga modular y limpia de estilos (cada archivo pesa menos de 150 líneas) -->
+    <!-- Carga modular y limpia de estilos -->
     <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/pizarra-chat.css">
+    <link rel="stylesheet" href="css/pizarra.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <!-- Librería de SocketIO -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <div class="contenedor-principal">
-        <!-- Sección Izquierda: Área de dibujo -->
+        
+        <!-- Sección Izquierda: Área de Dibujo y Pizarra -->
         <div class="seccion-pizarra">
             <div class="controles neobrutalismo-panel">
                 <h2>Pizarra Mágica ✨</h2>
@@ -23,23 +27,33 @@
                     <button id="btnLimpiarTodo" class="boton-secundario" title="Borra la pizarra completa para todos">Limpiar Todo</button>
                 </div>
             </div>
-            <!-- Lienzo de dibujo -->
+            <!-- Lienzo de dibujo HTML5 Canvas -->
             <canvas id="lienzoDibujo" width="800" height="600" class="neobrutalismo-panel"></canvas>
         </div>
 
-        <!-- Sección Derecha: Panel de Chat -->
+        <!-- Sección Derecha: Panel de Chat en Vivo y Herramientas -->
         <div class="seccion-chat neobrutalismo-panel">
             <div class="cabecera-chat">
                 <h3>Chat en Vivo 💬</h3>
-                <!-- Botón para minimizar / expandir la paleta y grosores -->
+                <!-- Botón para mostrar u ocultar la paleta de colores y grosores -->
                 <button id="btnTogglePaleta" class="boton-minimizar" title="Mostrar/Ocultar panel">🎨 Colores</button>
             </div>
+
+            <!-- Cuadro superior para cambiar el nombre de usuario de forma persistente -->
+            <div class="contenedor-nombre-usuario">
+                <label for="entradaNombreUsuario" class="etiqueta-nombre">Tu apodo:</label>
+                <div class="grupo-nombre">
+                    <input type="text" id="entradaNombreUsuario" class="neobrutalismo-interior" placeholder="Tu nombre..." maxlength="15" autocomplete="off">
+                    <button id="btnGuardarNombre" class="boton-primario boton-nombre">OK</button>
+                </div>
+                <button id="btnVaciarMiChat" class="boton-secundario boton-vaciar-chat" title="Borra los mensajes de tu vista local">Vaciar Mi Chat</button>
+            </div>
             
-            <!-- Contenedor unificado (colores y grosores) -->
+            <!-- Contenedor unificado colapsable (Colores y Grosores) -->
             <div id="contenedorPaletaDesplegable" class="contenedor-paleta colapsado">
                 <span class="etiqueta-panel">Colores:</span>
                 <div id="barraPaleta" class="barra-paleta">
-                    <!-- Los círculos de colores se inyectarán aquí por JS -->
+                    <!-- Los círculos de colores se inyectarán dinámicamente por JS -->
                 </div>
 
                 <span class="etiqueta-panel etiqueta-espaciada">Grosor del pincel:</span>
@@ -56,16 +70,22 @@
                 </div>
             </div>
 
+            <!-- Contenedor donde se muestran los mensajes del chat -->
             <div id="contenedorMensajes" class="mensajes neobrutalismo-interior">
-                <!-- Los mensajes irán aquí -->
+                <!-- Los mensajes se cargan aquí dinámicamente -->
             </div>
+
+            <!-- Área de entrada de texto -->
             <div class="area-entrada">
                 <input type="text" id="entradaMensaje" class="neobrutalismo-interior" placeholder="Escribe tu idea..." autocomplete="off">
                 <button id="btnEnviar" class="boton-primario">Enviar</button>
             </div>
         </div>
+
     </div>
 
-    <script src="/js/main.js"></script>
+    <!-- Carga modular de JavaScript respetando el límite de líneas -->
+    <script src="js/pizarra.js"></script>
+    <script src="js/chat.js"></script>
 </body>
 </html>

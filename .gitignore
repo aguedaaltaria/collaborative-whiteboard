@@ -1,0 +1,13 @@
+# Base de datos SQLite local
+backend/pizarra.db
+*.db
+
+# Entornos virtuales y dependencias de Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Archivos de caché del sistema operativo
+.DS_Store
+Thumbs.db

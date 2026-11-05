@@ -1,0 +1,28 @@
+/* frontend/css/pizarra.css */
+
+/* Sección Izquierda: Pizarra flexible */
+.seccion-pizarra {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex-grow: 1;
+}
+
+.controles {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+}
+
+.controles h2 {
+    font-weight: 900;
+    font-size: 1.5rem;
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+    cursor: crosshair;
+    flex-grow: 1;
+}
