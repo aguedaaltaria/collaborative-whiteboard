@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizarra Mágica</title>
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Carga modular y limpia de estilos (cada archivo pesa menos de 150 líneas) -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/pizarra-chat.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
-    <!-- Fuente moderna y redondeada de Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -26,14 +27,28 @@
         <div class="seccion-chat neobrutalismo-panel">
             <div class="cabecera-chat">
                 <h3>Chat en Vivo 💬</h3>
-                <!-- Botón para minimizar / expandir la paleta -->
-                <button id="btnTogglePaleta" class="boton-minimizar" title="Mostrar/Ocultar colores">🎨 Colores</button>
+                <!-- Botón para minimizar / expandir la paleta y grosores -->
+                <button id="btnTogglePaleta" class="boton-minimizar" title="Mostrar/Ocultar panel">🎨 Colores</button>
             </div>
             
-            <!-- Contenedor de la paleta (inicialmente oculto o colapsado para ganar espacio) -->
+            <!-- Contenedor unificado (colores y grosores) -->
             <div id="contenedorPaletaDesplegable" class="contenedor-paleta colapsado">
+                <span class="etiqueta-panel">Colores:</span>
                 <div id="barraPaleta" class="barra-paleta">
-                    <!-- Los círculos se inyectarán aquí por JS -->
+                    <!-- Los círculos de colores se inyectarán aquí por JS -->
+                </div>
+
+                <span class="etiqueta-panel etiqueta-espaciada">Grosor del pincel:</span>
+                <div id="barraGrosores" class="barra-grosores">
+                    <div class="circulo-grosor" data-grosor="2" title="Fino">
+                        <span class="punto-grosor fino"></span>
+                    </div>
+                    <div class="circulo-grosor seleccionado" data-grosor="5" title="Medio">
+                        <span class="punto-grosor medio"></span>
+                    </div>
+                    <div class="circulo-grosor" data-grosor="12" title="Grueso">
+                        <span class="punto-grosor grueso"></span>
+                    </div>
                 </div>
             </div>
 

@@ -1,0 +1,96 @@
+/* frontend/css/base.css */
+
+:root {
+    --color-primario: #10b981;
+    --color-secundario: #b91048;
+    --color-fondo-pagina: #fef3c7;
+    --color-fondo-panel: #ffffff;
+    --color-texto: #111111;
+    --grosor-borde: 3px;
+    --borde-fuerte: var(--grosor-borde) solid var(--color-texto);
+    --sombra-solida: 5px 5px 0px var(--color-texto);
+    --radio-esquinas: 16px;
+    --radio-botones: 50px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--color-fondo-pagina);
+    color: var(--color-texto);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Contenedor principal dinámico y adaptativo */
+.contenedor-principal {
+    display: flex;
+    gap: 25px;
+    align-items: stretch;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: center;
+}
+
+/* Clases reutilizables Neobrutalistas */
+.neobrutalismo-panel {
+    background-color: var(--color-fondo-panel);
+    border: var(--borde-fuerte);
+    border-radius: var(--radio-esquinas);
+    box-shadow: var(--sombra-solida);
+}
+
+.neobrutalismo-interior {
+    background-color: var(--color-fondo-pagina);
+    border: var(--borde-fuerte);
+    border-radius: 8px;
+}
+
+/* Estilos globales de Botones */
+button {
+    padding: 12px 24px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    color: var(--color-texto);
+    border: var(--borde-fuerte);
+    border-radius: var(--radio-botones);
+    cursor: pointer;
+    box-shadow: 3px 3px 0px var(--color-texto);
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+button:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px var(--color-texto);
+}
+
+.boton-primario {
+    background-color: var(--color-primario);
+}
+
+.boton-secundario {
+    background-color: var(--color-secundario);
+    color: var(--color-fondo-panel);
+}
+
+.boton-minimizar {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    border-radius: 20px;
+    background-color: var(--color-fondo-pagina);
+    box-shadow: 2px 2px 0px var(--color-texto);
+}
+
+.boton-minimizar:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px var(--color-texto);
+}

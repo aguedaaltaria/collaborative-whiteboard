@@ -1,18 +1,16 @@
 /* frontend/css/style.css */
 
 :root {
-    /* Paleta Neobrutalista */
-    --color-primario: #10b981; /* Verde esmeralda */
-    --color-secundario: #b91048; /* Magenta */
-    --color-fondo-pagina: #fef3c7; /* Amarillo pastel */
-    --color-fondo-panel: #ffffff; /* Blanco puro para áreas de trabajo */
-    
-    --color-texto: #111111; /* Casi negro para máximo contraste */
+    --color-primario: #10b981;
+    --color-secundario: #b91048;
+    --color-fondo-pagina: #fef3c7;
+    --color-fondo-panel: #ffffff;
+    --color-texto: #111111;
     --grosor-borde: 3px;
     --borde-fuerte: var(--grosor-borde) solid var(--color-texto);
     --sombra-solida: 5px 5px 0px var(--color-texto);
     --radio-esquinas: 16px;
-    --radio-botones: 50px; /* Forma de píldora */
+    --radio-botones: 50px;
 }
 
 * {
@@ -37,7 +35,6 @@ body {
     padding: 20px;
 }
 
-/* Clases reutilizables para el estilo Neobrutalista */
 .neobrutalismo-panel {
     background-color: var(--color-fondo-panel);
     border: var(--borde-fuerte);
@@ -51,7 +48,6 @@ body {
     border-radius: 8px;
 }
 
-/* Zona de dibujo */
 .seccion-pizarra {
     display: flex;
     flex-direction: column;
@@ -75,7 +71,6 @@ canvas {
     cursor: crosshair;
 }
 
-/* Zona de chat */
 .seccion-chat {
     width: 340px;
     display: flex;
@@ -121,7 +116,6 @@ input[type="text"]:focus {
     background-color: var(--color-fondo-panel);
 }
 
-/* Botones Neobrutalistas */
 button {
     padding: 12px 24px;
     font-family: 'Nunito', sans-serif;
@@ -162,11 +156,10 @@ button:active {
     box-shadow: 0px 0px 0px var(--color-texto);
 }
 
-/* Panel de colores minimizable y paleta */
 .contenedor-paleta {
     overflow: hidden;
     max-height: 220px;
-    transition: max-height 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease;
+    transition: max-height 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease, padding 0.3s ease;
     margin-bottom: 15px;
     padding: 10px;
     background-color: var(--color-fondo-pagina);
@@ -178,7 +171,8 @@ button:active {
 .contenedor-paleta.colapsado {
     max-height: 0;
     opacity: 0;
-    padding: 0 10px;
+    padding-top: 0;
+    padding-bottom: 0;
     margin-bottom: 0;
     border: none;
 }
