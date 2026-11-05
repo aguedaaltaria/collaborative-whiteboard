@@ -17,7 +17,11 @@
         <div class="seccion-pizarra">
             <div class="controles neobrutalismo-panel">
                 <h2>Pizarra Mágica ✨</h2>
-                <button id="btnLimpiar" class="boton-secundario">Limpiar Pizarra</button>
+                <div class="grupo-botones-limpiar">
+                    <button id="btnDeshacer" class="boton-secundario" title="Borra tu último trazo hecho (Control + Z)">Deshacer</button>
+                    <button id="btnLimpiarMio" class="boton-secundario" title="Borra únicamente los trazos que tú dibujaste">Limpiar Lo Mío</button>
+                    <button id="btnLimpiarTodo" class="boton-secundario" title="Borra la pizarra completa para todos">Limpiar Todo</button>
+                </div>
             </div>
             <!-- Lienzo de dibujo -->
             <canvas id="lienzoDibujo" width="800" height="600" class="neobrutalismo-panel"></canvas>
