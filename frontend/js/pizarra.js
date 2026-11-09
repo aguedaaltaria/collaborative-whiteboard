@@ -9,14 +9,17 @@ socket.on('connect', () => {
     console.log("Conectado. Mi identificador de usuario es:", identificadorUsuarioActual);
 });
 
+// Referencias al Canvas y contexto
 const lienzoDibujo = document.getElementById('lienzoDibujo');
 const contextoDibujo = lienzoDibujo.getContext('2d');
 
+// Variables de estado del dibujo
 let estaDibujando = false;
 let coordenadaXAnterior = 0;
 let coordenadaYAnterior = 0;
 let historialTrazos = [];
 
+// Configuración de pincel
 const PALETA_COLORES_UNICOS = [
     '#10b981', '#059669', '#84cc16', '#facc15', '#d97706',
     '#f59e0b', '#ea580c', '#b91048', '#ef4444', '#991b1b',
@@ -31,6 +34,7 @@ contextoDibujo.lineWidth = grosorActualPincel;
 contextoDibujo.lineCap = 'round';
 contextoDibujo.strokeStyle = colorActualPincel;
 
+// Inicialización de la paleta de colores en la interfaz
 const barraPaletaColores = document.getElementById('barraPaleta');
 barraPaletaColores.innerHTML = '';
 
@@ -49,6 +53,7 @@ PALETA_COLORES_UNICOS.forEach(codigoColor => {
     barraPaletaColores.appendChild(circuloColor);
 });
 
+// Selector de grosor del pincel
 const circulosGrosorPincel = document.querySelectorAll('.circulo-grosor');
 circulosGrosorPincel.forEach(circuloGrosor => {
     circuloGrosor.addEventListener('click', () => {
@@ -59,14 +64,33 @@ circulosGrosorPincel.forEach(circuloGrosor => {
     });
 });
 
+// Botón para mostrar/ocultar el panel colapsable
 const botonAlternarPaleta = document.getElementById('btnTogglePaleta');
 const contenedorPaletaDesplegable = document.getElementById('contenedorPaletaDesplegable');
 botonAlternarPaleta.addEventListener('click', () => {
     contenedorPaletaDesplegable.classList.toggle('colapsado');
 });
 
+// Funciones principales de renderizado en el Canvas
+function dibujarLineaEnCanvas(coordenadaXInicio, coordenadaYInicio, coordenadaXFin, coordenadaYFin, colorTrazo, grosorTrazo) {
+    contextoDibujo.beginPath();
+    contextoDibujo.moveTo(coordenadaXInicio, coordenadaYInicio);
+    contextoDibujo.lineTo(coordenadaXFin, coordenadaYFin);
+    contextoDibujo.strokeStyle = colorTrazo;
+    contextoDibujo.lineWidth = grosorTrazo;
+    contextoDibujo.stroke();
+}
+
 function redibujarPizarraCompleta() {
     contextoDibujo.clearRect(0, 0, lienzoDibujo.width, lienzoDibujo.height);
+    
+    // 1. Dibujar imagen de fondo si está definida en el módulo de fondo
+    if (typeof obtenerImagenFondoActual === 'function' && obtenerImagenFondoActual()) {
+        const imgFondo = obtenerImagenFondoActual();
+        contextoDibujo.drawImage(imgFondo, 0, 0, lienzoDibujo.width, lienzoDibujo.height);
+    }
+
+    // 2. Redibujar todos los trazos vectoriales encima
     historialTrazos.forEach(trazo => {
         dibujarLineaEnCanvas(
             trazo.coordenadaXInicio,
@@ -79,15 +103,7 @@ function redibujarPizarraCompleta() {
     });
 }
 
-function dibujarLineaEnCanvas(coordenadaXInicio, coordenadaYInicio, coordenadaXFin, coordenadaYFin, colorTrazo, grosorTrazo) {
-    contextoDibujo.beginPath();
-    contextoDibujo.moveTo(coordenadaXInicio, coordenadaYInicio);
-    contextoDibujo.lineTo(coordenadaXFin, coordenadaYFin);
-    contextoDibujo.strokeStyle = colorTrazo;
-    contextoDibujo.lineWidth = grosorTrazo;
-    contextoDibujo.stroke();
-}
-
+// Eventos de dibujo con el ratón
 function iniciarTrazo(evento) {
     estaDibujando = true;
     coordenadaXAnterior = evento.offsetX;
@@ -127,6 +143,7 @@ lienzoDibujo.addEventListener('mousemove', dibujarTrazo);
 lienzoDibujo.addEventListener('mouseup', detenerTrazo);
 lienzoDibujo.addEventListener('mouseout', detenerTrazo);
 
+// Sincronización WebSockets de trazos remotos
 socket.on('dibujar_trazo_remoto', (datosTrazo) => {
     historialTrazos.push(datosTrazo);
     dibujarLineaEnCanvas(
@@ -139,6 +156,7 @@ socket.on('dibujar_trazo_remoto', (datosTrazo) => {
     );
 });
 
+// Botón y evento: Limpiar solo mis trazos
 const botonLimpiarMio = document.getElementById('btnLimpiarMio');
 botonLimpiarMio.addEventListener('click', () => {
     historialTrazos = historialTrazos.filter(trazo => trazo.idSocketUsuario !== identificadorUsuarioActual);
@@ -151,18 +169,20 @@ socket.on('limpiar_usuario_remoto', (identificadorUsuarioRemoto) => {
     redibujarPizarraCompleta();
 });
 
+// Botón y evento: Limpiar toda la pizarra
 const botonLimpiarTodo = document.getElementById('btnLimpiarTodo');
 botonLimpiarTodo.addEventListener('click', () => {
     historialTrazos = [];
-    contextoDibujo.clearRect(0, 0, lienzoDibujo.width, lienzoDibujo.height);
+    redibujarPizarraCompleta();
     socket.emit('limpiar_pizarra_servidor');
 });
 
 socket.on('limpiar_pizarra_remota', () => {
     historialTrazos = [];
-    contextoDibujo.clearRect(0, 0, lienzoDibujo.width, lienzoDibujo.height);
+    redibujarPizarraCompleta();
 });
 
+// Botón y evento: Deshacer último trazo propio
 const botonDeshacer = document.getElementById('btnDeshacer');
 botonDeshacer.addEventListener('click', () => {
     let indiceUltimoTrazoPropio = -1;
@@ -193,6 +213,7 @@ socket.on('deshacer_trazo_remoto', (identificadorUsuarioRemoto) => {
     }
 });
 
+// Carga del historial inicial al conectar con el servidor
 socket.on('cargar_historial_inicial', (historialInicial) => {
     historialTrazos = historialInicial.trazos;
     redibujarPizarraCompleta();
@@ -200,6 +221,10 @@ socket.on('cargar_historial_inicial', (historialInicial) => {
     colorFijoChatUsuario = historialInicial.colorAsignado;
     colorActualPincel = colorFijoChatUsuario;
     contextoDibujo.strokeStyle = colorActualPincel;
+    
+    if (historialInicial.fondoActual && typeof aplicarImagenFondo === 'function') {
+        aplicarImagenFondo(historialInicial.fondoActual, false);
+    }
 
     if (historialInicial.nombreAsignado) {
         nombreUsuarioActual = historialInicial.nombreAsignado;
@@ -222,6 +247,7 @@ socket.on('cargar_historial_inicial', (historialInicial) => {
     }
 });
 
+// Utilidad auxiliar para comparar colores RGB vs HEX
 function rgbAHex(rgb) {
     if (!rgb.startsWith('rgb')) return rgb;
     const [r, g, b] = rgb.match(/\d+/g).map(Number);

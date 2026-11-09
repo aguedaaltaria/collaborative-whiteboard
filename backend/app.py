@@ -106,7 +106,8 @@ def manejar_conexion(auth=None):
         'trazos': historial_trazos,
         'mensajes': historial_mensajes,
         'colorAsignado': color_asignado,
-        'nombreAsignado': nombre_asignado
+        'nombreAsignado': nombre_asignado,
+        'fondoActual': fondo_actual_servidor
     })
 
     # Notificar a los demás clientes que alguien se conectó
@@ -213,6 +214,24 @@ def manejar_limpiar_usuario(identificador_usuario):
 @socketio.on('deshacer_trazo_servidor')
 def manejar_deshacer_trazo(identificador_usuario):
     emit('deshacer_trazo_remoto', identificador_usuario, broadcast=True)
+
+
+# Variable global en el servidor para almacenar el fondo actual en Base64 (o None)
+fondo_actual_servidor = None
+
+@socketio.on('cambiar_fondo_servidor')
+def manejar_cambiar_fondo(datos_fondo):
+    global fondo_actual_servidor
+    fondo_actual_servidor = datos_fondo.get('imagenBase64')
+    # Transmitir el nuevo fondo a todos los demás clientes
+    emit('cambiar_fondo_remoto', fondo_actual_servidor, broadcast=True, include_self=False)
+
+@socketio.on('quitar_fondo_servidor')
+def manejar_quitar_fondo():
+    global fondo_actual_servidor
+    fondo_actual_servidor = None
+    # Notificar a todos que se removió el fondo
+    emit('quitar_fondo_remoto', broadcast=True, include_self=False)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=5000)

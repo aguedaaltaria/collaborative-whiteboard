@@ -1,0 +1,125 @@
+/* frontend/css/galeria.css */
+
+/* Sidebar lateral izquierdo flotante */
+.galeria-desplegable {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 210px;
+    max-height: calc(100vh - 40px);
+    background-color: var(--color-fondo-panel);
+    border: var(--borde-fuerte);
+    border-radius: var(--radio-esquinas);
+    box-shadow: var(--sombra-solida);
+    padding: 12px;
+    z-index: 1000;
+    overflow-y: auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.galeria-desplegable.colapsado {
+    transform: translateX(-120%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.cabecera-galeria {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 2px dashed rgba(17, 17, 17, 0.2);
+    padding-bottom: 6px;
+}
+
+.cabecera-galeria h3 {
+    font-size: 0.9rem;
+    font-weight: 900;
+}
+
+.boton-cerrar-panel {
+    background: none;
+    border: 2px solid var(--color-texto);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 1px 1px 0px var(--color-texto);
+}
+
+.boton-cerrar-panel:active {
+    box-shadow: none;
+    transform: translate(1px, 1px);
+}
+
+/* Contenedor de miniaturas con scroll vertical estricto */
+.grid-miniaturas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.tarjeta-miniatura {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    background-color: var(--color-fondo-pagina);
+    border: 2px solid var(--color-texto);
+    border-radius: 6px;
+    box-shadow: 2px 2px 0px var(--color-texto);
+    gap: 6px;
+}
+
+.tarjeta-miniatura img {
+    width: 100%;
+    height: 60px;
+    object-fit: cover;
+    border: 2px solid var(--color-texto);
+    border-radius: 4px;
+}
+
+.grupo-botones-tarjeta {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    justify-content: center;
+}
+
+.boton-cargar-mini, 
+.boton-borrar-mini {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    box-shadow: 1px 1px 0px var(--color-texto);
+    cursor: pointer;
+}
+
+.boton-borrar-mini {
+    background-color: var(--color-secundario);
+    color: var(--color-fondo-panel);
+}
+
+.texto-vacio {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #555;
+    text-align: center;
+    padding: 20px 0;
+}
+
+/* Asegurar que la imagen de la miniatura tenga fondo blanco opaco */
+.tarjeta-miniatura img {
+    width: 100%;
+    height: 60px;
+    object-fit: cover;
+    background-color: #ffffff; /* Fondo blanco sólido para la imagen */
+    border: 2px solid var(--color-texto);
+    border-radius: 4px;
+}

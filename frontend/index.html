@@ -1,13 +1,12 @@
-<!-- frontend/index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizarra Mágica</title>
-    <!-- Carga modular y limpia de estilos -->
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/pizarra.css">
+    <link rel="stylesheet" href="css/galeria.css"> 
     <link rel="stylesheet" href="css/chat.css">
     <!-- Librería de SocketIO -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
@@ -22,11 +21,27 @@
             <div class="controles neobrutalismo-panel">
                 <h2>Pizarra Mágica ✨</h2>
                 <div class="grupo-botones-limpiar">
-                    <button id="btnDeshacer" class="boton-secundario" title="Borra tu último trazo hecho (Control + Z)">Deshacer</button>
-                    <button id="btnLimpiarMio" class="boton-secundario" title="Borra únicamente los trazos que tú dibujaste">Limpiar Lo Mío</button>
-                    <button id="btnLimpiarTodo" class="boton-secundario" title="Borra la pizarra completa para todos">Limpiar Todo</button>
+                    <button id="btnGuardarDiseno" class="boton-primario" title="Guardar diseño actual">💾 Guardar</button>
+                    <button id="btnToggleGaleria" class="boton-secundario" title="Mostrar/Ocultar galería de diseños">📂 Diseños</button>
+                    <button id="btnCargarFondo" class="boton-secundario" title="Cargar imagen de fondo">🖼️ Fondo</button>
+                    <input type="file" id="inputFondoLocal" accept="image/*" style="display: none;">
+                    <button id="btnDeshacer" class="boton-secundario" title="Deshacer último trazo">Deshacer</button>
+                    <button id="btnLimpiarMio" class="boton-secundario" title="Limpiar mis trazos">Limpiar Lo Mío</button>
+                    <button id="btnLimpiarTodo" class="boton-secundario" title="Limpiar todo">Limpiar Todo</button>
                 </div>
-            </div>
+
+                <!-- Panel flotante desplegable para la galería de diseños guardados -->
+                <div id="panelGaleriaDesplegable" class="neobrutalismo-panel galeria-desplegable colapsado">
+                    <div class="cabecera-galeria">
+                        <h3>Diseños 📂</h3>
+                        <button id="btnCerrarGaleria" class="boton-cerrar-panel" title="Minimizar panel">✕</button>
+                    </div>
+                    <div id="contenedorGridMiniaturas" class="grid-miniaturas">
+                        <!-- Las miniaturas se inyectan aquí con scroll -->
+                    </div>
+                </div>
+            </div>            
+
             <!-- Lienzo de dibujo HTML5 Canvas -->
             <canvas id="lienzoDibujo" width="800" height="600" class="neobrutalismo-panel"></canvas>
         </div>
@@ -35,11 +50,10 @@
         <div class="seccion-chat neobrutalismo-panel">
             <div class="cabecera-chat">
                 <h3>Chat en Vivo 💬</h3>
-                <!-- Botón para mostrar u ocultar la paleta de colores y grosores -->
-                <button id="btnTogglePaleta" class="boton-minimizar" title="Mostrar/Ocultar panel">🎨 Colores</button>
+                <button id="btnTogglePaleta" class="boton-minimizar" title="Mostrar/Ocultar panel de colores">🎨 Colores</button>
             </div>
 
-            <!-- Cuadro superior para cambiar el nombre de usuario de forma persistente -->
+            <!-- Cuadro superior para cambiar el nombre de usuario -->
             <div class="contenedor-nombre-usuario">
                 <label for="entradaNombreUsuario" class="etiqueta-nombre">Tu apodo:</label>
                 <div class="grupo-nombre">
@@ -53,27 +67,19 @@
             <div id="contenedorPaletaDesplegable" class="contenedor-paleta colapsado">
                 <span class="etiqueta-panel">Colores:</span>
                 <div id="barraPaleta" class="barra-paleta">
-                    <!-- Los círculos de colores se inyectarán dinámicamente por JS -->
+                    <!-- Círculos de colores -->
                 </div>
 
                 <span class="etiqueta-panel etiqueta-espaciada">Grosor del pincel:</span>
                 <div id="barraGrosores" class="barra-grosores">
-                    <div class="circulo-grosor" data-grosor="2" title="Fino">
-                        <span class="punto-grosor fino"></span>
-                    </div>
-                    <div class="circulo-grosor seleccionado" data-grosor="5" title="Medio">
-                        <span class="punto-grosor medio"></span>
-                    </div>
-                    <div class="circulo-grosor" data-grosor="12" title="Grueso">
-                        <span class="punto-grosor grueso"></span>
-                    </div>
+                    <div class="circulo-grosor" data-grosor="2" title="Fino"><span class="punto-grosor fino"></span></div>
+                    <div class="circulo-grosor seleccionado" data-grosor="5" title="Medio"><span class="punto-grosor medio"></span></div>
+                    <div class="circulo-grosor" data-grosor="12" title="Grueso"><span class="punto-grosor grueso"></span></div>
                 </div>
             </div>
 
-            <!-- Contenedor donde se muestran los mensajes del chat -->
-            <div id="contenedorMensajes" class="mensajes neobrutalismo-interior">
-                <!-- Los mensajes se cargan aquí dinámicamente -->
-            </div>
+            <!-- Contenedor de mensajes del chat -->
+            <div id="contenedorMensajes" class="mensajes neobrutalismo-interior"></div>
 
             <!-- Área de entrada de texto -->
             <div class="area-entrada">
@@ -84,8 +90,10 @@
 
     </div>
 
-    <!-- Carga modular de JavaScript respetando el límite de líneas -->
+    <!-- Carga modular de JavaScript -->
     <script src="js/pizarra.js"></script>
+    <script src="js/fondo.js"></script>
+    <script src="js/galeria.js"></script>
     <script src="js/chat.js"></script>
 </body>
 </html>
