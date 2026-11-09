@@ -10,7 +10,7 @@ const botonVaciarMiChat = document.getElementById('btnVaciarMiChat');
 let nombreUsuarioActual = sessionStorage.getItem('pizarra_nombre_usuario_sesion') || 'Artista';
 entradaNombreUsuario.value = nombreUsuarioActual;
 
-// Función global para actualizar el input cuando Python asigne un nuevo nombre
+// Función para actualizar el campo de texto del apodo cuando el servidor asigna uno nuevo
 function actualizarInputNombre(nuevoNombre) {
     nombreUsuarioActual = nuevoNombre;
     entradaNombreUsuario.value = nombreUsuarioActual;
@@ -30,6 +30,7 @@ botonVaciarMiChat.addEventListener('click', () => {
     contenedorMensajes.innerHTML = '';
 });
 
+// Función explícita sin operadores terciarios para calcular el contraste del texto del autor
 function calcularColorTextoSegunFondo(colorHexadecimal) {
     const limpiadorHex = colorHexadecimal.replace('#', '');
     const rojo = parseInt(limpiadorHex.substr(0, 2), 16);
@@ -78,7 +79,7 @@ function renderizarMensajeEnChat(datosMensaje) {
 function renderizarNotificacionSistema(textoNotificacion) {
     const elementoNotificacion = document.createElement('div');
     elementoNotificacion.classList.add('burbuja-sistema');
-    elementoNotificacion.textContent = `🔔 ${textoNotificacion}`;
+    elementoNotificacion.textContent = "🔔 " + textoNotificacion;
     
     contenedorMensajes.appendChild(elementoNotificacion);
     contenedorMensajes.scrollTop = contenedorMensajes.scrollHeight;
@@ -93,7 +94,9 @@ function cargarMensajesInicialesChat(mensajes) {
 
 function enviarMensajeChat() {
     const textoMensaje = entradaMensaje.value.trim();
-    if (textoMensaje === '') return;
+    if (textoMensaje === '') {
+        return;
+    }
 
     const datosMensaje = {
         idSocketUsuario: identificadorUsuarioActual,
