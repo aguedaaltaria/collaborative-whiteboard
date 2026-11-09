@@ -78,12 +78,12 @@ def manejar_conexion(auth=None):
     nombre_asignado = f"{animal}{numero}"
     nombres_activos_usuarios[id_socket] = nombre_asignado
 
-    # Imprimir con claridad en la terminal de Alacritty
     print(f"🟢 Nuevo usuario conectado: {nombre_asignado} (ID: {id_socket})")
 
     conexion = sqlite3.connect(ruta_base_datos)
     cursor = conexion.cursor()
     
+    # Recuperar el historial de trazos incluyendo color y grosor
     cursor.execute('SELECT id_socket_usuario, coordenada_x_inicio, coordenada_y_inicio, coordenada_x_fin, coordenada_y_fin, color_trazo, grosor_trazo FROM trazos')
     filas_trazos = cursor.fetchall()
     historial_trazos = [{
@@ -91,6 +91,7 @@ def manejar_conexion(auth=None):
         'coordenadaXFin': f[3], 'coordenadaYFin': f[4], 'colorTrazo': f[5], 'grosorTrazo': f[6]
     } for f in filas_trazos]
 
+    # Recuperar el historial de mensajes del chat
     cursor.execute('SELECT id, id_socket_usuario, nombre_usuario, color_usuario, texto_mensaje FROM mensajes')
     filas_mensajes = cursor.fetchall()
     historial_mensajes = [{
@@ -100,6 +101,7 @@ def manejar_conexion(auth=None):
 
     conexion.close()
 
+    # Enviar historiales y configuraciones iniciales al cliente
     emit('cargar_historial_inicial', {
         'trazos': historial_trazos,
         'mensajes': historial_mensajes,
@@ -107,7 +109,7 @@ def manejar_conexion(auth=None):
         'nombreAsignado': nombre_asignado
     })
 
-    # Notificar a todos los clientes en el chat
+    # Notificar a los demás clientes que alguien se conectó
     socketio.emit('notificacion_sistema', {
         'texto': f'{nombre_asignado} se ha conectado.'
     })
@@ -130,33 +132,8 @@ def manejar_desconexion():
     if id_socket in nombres_activos_usuarios:
         del nombres_activos_usuarios[id_socket]
         
-    # Imprimir la desconexión con el apodo en la terminal
     print(f"🔴 Usuario desconectado: {nombre_usuario} (ID: {id_socket})")
 
-    socketio.emit('notificacion_sistema', {
-        'texto': f'{nombre_usuario} se ha desconectado.'
-    })
-
-@socketio.on('actualizar_nombre_servidor')
-def manejar_actualizar_nombre(nuevo_nombre):
-    id_socket = request.sid
-    if nuevo_nombre:
-        nombres_activos_usuarios[id_socket] = nuevo_nombre
-
-@socketio.on('disconnect')
-def manejar_desconexion():
-    id_socket = request.sid
-    # Recuperar el último nombre registrado en Python para este usuario
-    nombre_usuario = nombres_activos_usuarios.get(id_socket, f"Usuario ({id_socket[:4]})")
-    
-    if id_socket in colores_activos_usuarios:
-        del colores_activos_usuarios[id_socket]
-    if id_socket in nombres_activos_usuarios:
-        del nombres_activos_usuarios[id_socket]
-        
-    print(f"Usuario desconectado: {id_socket} ({nombre_usuario})")
-
-    # Notificar globalmente usando su último nombre registrado
     socketio.emit('notificacion_sistema', {
         'texto': f'{nombre_usuario} se ha desconectado.'
     })
@@ -165,17 +142,26 @@ def manejar_desconexion():
 def manejar_trazo_servidor(datos_trazo):
     conexion = sqlite3.connect(ruta_base_datos)
     cursor = conexion.cursor()
+    
+    # Insertar el trazo guardando sus coordenadas, color y grosor en SQLite
     cursor.execute('''
         INSERT INTO trazos (id_socket_usuario, coordenada_x_inicio, coordenada_y_inicio, coordenada_x_fin, coordenada_y_fin, color_trazo, grosor_trazo)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     ''', (
-        datos_trazo.get('idSocketUsuario'), datos_trazo.get('coordenadaXInicio'),
-        datos_trazo.get('coordenadaYInicio'), datos_trazo.get('coordenadaXFin'),
-        datos_trazo.get('coordenadaYFin'), datos_trazo.get('colorTrazo'), datos_trazo.get('grosorTrazo')
+        datos_trazo.get('idSocketUsuario'), 
+        datos_trazo.get('coordenadaXInicio'),
+        datos_trazo.get('coordenadaYInicio'), 
+        datos_trazo.get('coordenadaXFin'),
+        datos_trazo.get('coordenadaYFin'), 
+        datos_trazo.get('colorTrazo'), 
+        datos_trazo.get('grosorTrazo')
     ))
+    
     conexion.commit()
     conexion.close()
-    emit('dibujar_trazo_remoto', datos_trazo, to=None, include_self=False)
+    
+    # Retransmitir el trazo en tiempo real a todos los demás participantes
+    emit('dibujar_trazo_remoto', datos_trazo, broadcast=True, include_self=False)
 
 @socketio.on('enviar_mensaje_servidor')
 def manejar_mensaje_servidor(datos_mensaje):
@@ -195,7 +181,7 @@ def manejar_mensaje_servidor(datos_mensaje):
     conexion.close()
 
     datos_mensaje['idMensaje'] = id_generado
-    emit('nuevo_mensaje_remoto', datos_mensaje, to=None)
+    emit('nuevo_mensaje_remoto', datos_mensaje, broadcast=True)
 
 @socketio.on('borrar_mensaje_servidor')
 def manejar_borrar_mensaje(id_mensaje):
@@ -204,7 +190,7 @@ def manejar_borrar_mensaje(id_mensaje):
     cursor.execute('DELETE FROM mensajes WHERE id = ?', (id_mensaje,))
     conexion.commit()
     conexion.close()
-    emit('borrar_mensaje_remoto', id_mensaje, to=None)
+    emit('borrar_mensaje_remoto', id_mensaje, broadcast=True)
 
 @socketio.on('limpiar_pizarra_servidor')
 def manejar_limpiar_pizarra():
@@ -213,7 +199,7 @@ def manejar_limpiar_pizarra():
     cursor.execute('DELETE FROM trazos')
     conexion.commit()
     conexion.close()
-    emit('limpiar_pizarra_remota', to=None)
+    emit('limpiar_pizarra_remota', broadcast=True)
 
 @socketio.on('limpiar_usuario_servidor')
 def manejar_limpiar_usuario(identificador_usuario):
@@ -222,11 +208,11 @@ def manejar_limpiar_usuario(identificador_usuario):
     cursor.execute('DELETE FROM trazos WHERE id_socket_usuario = ?', (identificador_usuario,))
     conexion.commit()
     conexion.close()
-    emit('limpiar_usuario_remoto', identificador_usuario, to=None)
+    emit('limpiar_usuario_remoto', identificador_usuario, broadcast=True)
 
 @socketio.on('deshacer_trazo_servidor')
 def manejar_deshacer_trazo(identificador_usuario):
-    emit('deshacer_trazo_remoto', identificador_usuario, to=None)
+    emit('deshacer_trazo_remoto', identificador_usuario, broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=5000)

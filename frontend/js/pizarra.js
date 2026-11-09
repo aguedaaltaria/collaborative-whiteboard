@@ -24,9 +24,9 @@ const PALETA_COLORES_UNICOS = [
     '#06b6d4', '#0284c7', '#1e40af', '#111827', '#ffffff'
 ];
 
-let colorActualPincel = '#10b981'; // Valor por defecto temporal hasta recibir el del servidor
-
+let colorActualPincel = '#10b981'; // Color por defecto temporal hasta recibir el del servidor
 let grosorActualPincel = 5;
+
 contextoDibujo.lineWidth = grosorActualPincel;
 contextoDibujo.lineCap = 'round';
 contextoDibujo.strokeStyle = colorActualPincel;
@@ -38,12 +38,14 @@ PALETA_COLORES_UNICOS.forEach(codigoColor => {
     const circuloColor = document.createElement('div');
     circuloColor.classList.add('circulo-color');
     circuloColor.style.backgroundColor = codigoColor;
+    
     circuloColor.addEventListener('click', () => {
         colorActualPincel = codigoColor;
         contextoDibujo.strokeStyle = colorActualPincel;
         document.querySelectorAll('.circulo-color').forEach(c => c.classList.remove('seleccionado'));
         circuloColor.classList.add('seleccionado');
     });
+    
     barraPaletaColores.appendChild(circuloColor);
 });
 
@@ -66,12 +68,14 @@ botonAlternarPaleta.addEventListener('click', () => {
 function redibujarPizarraCompleta() {
     contextoDibujo.clearRect(0, 0, lienzoDibujo.width, lienzoDibujo.height);
     historialTrazos.forEach(trazo => {
-        contextoDibujo.beginPath();
-        contextoDibujo.moveTo(trazo.coordenadaXInicio, trazo.coordenadaYInicio);
-        contextoDibujo.lineTo(trazo.coordenadaXFin, trazo.coordenadaYFin);
-        contextoDibujo.strokeStyle = trazo.colorTrazo;
-        contextoDibujo.lineWidth = trazo.grosorTrazo;
-        contextoDibujo.stroke();
+        dibujarLineaEnCanvas(
+            trazo.coordenadaXInicio,
+            trazo.coordenadaYInicio,
+            trazo.coordenadaXFin,
+            trazo.coordenadaYFin,
+            trazo.colorTrazo,
+            trazo.grosorTrazo
+        );
     });
 }
 
@@ -126,9 +130,12 @@ lienzoDibujo.addEventListener('mouseout', detenerTrazo);
 socket.on('dibujar_trazo_remoto', (datosTrazo) => {
     historialTrazos.push(datosTrazo);
     dibujarLineaEnCanvas(
-        datosTrazo.coordenadaXInicio, datosTrazo.coordenadaYInicio,
-        datosTrazo.coordenadaXFin, datosTrazo.coordenadaYFin,
-        datosTrazo.colorTrazo, datosTrazo.grosorTrazo
+        datosTrazo.coordenadaXInicio,
+        datosTrazo.coordenadaYInicio,
+        datosTrazo.coordenadaXFin,
+        datosTrazo.coordenadaYFin,
+        datosTrazo.colorTrazo,
+        datosTrazo.grosorTrazo
     );
 });
 
@@ -186,17 +193,14 @@ socket.on('deshacer_trazo_remoto', (identificadorUsuarioRemoto) => {
     }
 });
 
-// Recepción del historial inicial y asignación del color exclusivo de usuario
 socket.on('cargar_historial_inicial', (historialInicial) => {
     historialTrazos = historialInicial.trazos;
     redibujarPizarraCompleta();
 
-    // Asignar el color único recibido del servidor
     colorFijoChatUsuario = historialInicial.colorAsignado;
     colorActualPincel = colorFijoChatUsuario;
     contextoDibujo.strokeStyle = colorActualPincel;
 
-    // Sincronizar estrictamente el nombre asignado por Python con la sesión y la interfaz
     if (historialInicial.nombreAsignado) {
         nombreUsuarioActual = historialInicial.nombreAsignado;
         sessionStorage.setItem('pizarra_nombre_usuario_sesion', nombreUsuarioActual);
@@ -205,7 +209,6 @@ socket.on('cargar_historial_inicial', (historialInicial) => {
         }
     }
 
-    // Marcar visualmente el círculo seleccionado en la paleta
     document.querySelectorAll('.circulo-color').forEach(c => {
         if (c.style.backgroundColor === colorActualPincel || rgbAHex(c.style.backgroundColor) === colorActualPincel) {
             c.classList.add('seleccionado');
@@ -219,7 +222,6 @@ socket.on('cargar_historial_inicial', (historialInicial) => {
     }
 });
 
-// Función auxiliar para convertir rgb a hex si es necesario
 function rgbAHex(rgb) {
     if (!rgb.startsWith('rgb')) return rgb;
     const [r, g, b] = rgb.match(/\d+/g).map(Number);
